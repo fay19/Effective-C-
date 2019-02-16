@@ -11,10 +11,10 @@ e2 = e1; // copy assignment operator
 4. Compilers may refuse to generate these functions if they are not in proper use. 
 - Say if a class hold a reference or const variables, complier could refuse to generate copy assignment operator
 ```
-class Dog{
+class Dog {
   std::string& name;
   std::size_t age;
-}
+};
 
 Dog p("Persephone", 10);
 Dog s("Satch", 2);
@@ -25,7 +25,13 @@ p = s; //?? this is illegal, because Dog hold a reference to the name string, c+
 ```
 - if the base class copy assignment opertator is private, compilers reject implicit copy assignment operators in derived class.
 
-5. All compiler generated function are public. To prevent these function from being generated, declare them yourself! Declare copy construtor and copy assignment operator private if no copy is allowed.
+5. All compiler generated function are public. To make a uncopyable object:
+ - declare copy constructor and copy assignment operator as private
+ - delete them
+ ```
+ Object(const Object&) = delete;
+ Object& operator=(const Object&) = delete;
+ ```
 6. Declare destrutors virtual in polymorphic base classes. When a derived class object is deleted through a pointer to a base class with a non-virtual destructor, results are undefined. Any class with virtual functions should almost certainly have a virtual destrutor
 7. 
 
