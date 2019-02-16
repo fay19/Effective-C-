@@ -19,7 +19,9 @@ class Dog{
 Dog p("Persephone", 10);
 Dog s("Satch", 2);
 
-p = s; //?? this is illegal, because Dog hold a reference to the name string, c++ doesnt provide a way to make a reference refer to a different object. Alternatively, the string object that p.name refers to cannot be modified by this assignement either.
+p = s; //?? this is illegal, because Dog hold a reference to the name string, c++ doesnt provide a way to 
+       //make a reference refer to a different object. Alternatively, the string object that p.name 
+       //refers to cannot be modified by this assignement either.
 ```
 - if the base class copy assignment opertator is private, compilers reject implicit copy assignment operators in derived class.
 
