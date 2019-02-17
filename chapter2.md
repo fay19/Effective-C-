@@ -37,4 +37,41 @@ p = s; //?? this is illegal, because Dog hold a reference to the name string, c+
 8. Never call virtual functions during construction or destruction. In contruction of derived class object, base class constructor is called first. If a virtual function is called in base class constructor, then the base class virtual function is called rathen the derived class version. It never goes down to derived class version. 
 - An object didnt become a derived class object until execution of a derived clalss constructor begins.
 - Once a derived class destructor has run, the object's derived class data members assume undefined values. So C++ treats them as if they no longer exists. Upon entry to the base class desctructor, the object becomes a base class object, and all parts of C++ - virtual functions, dynamic_cast, etc., -treat it that way.
+9. explicit specifier
+```
+struct A
+{
+  A(int) {}
+  A(int, int) {}
+  operator bool() const { return true;}
+};
 
+struct B
+{
+  explicit B(int) {}
+  explicit B(int, int) {}
+  explicit operator bool() const { return true };
+};
+
+int main {
+  A a1 = 1; //OK: copy initialization selects A::A(int), essentially A a1 = A(1);
+  A a2(2); //OK: direct initialization selects A::A(int)
+  A a3 {4, 5}; //OK: direct initialization selects A::A(int, int)
+  A a4 = {4, 5} //OK: copy initialization selects A::A(int, int)
+  A a5 = (A)1; //OK: explicit cast performs static_cast
+  if (a1); //OK: operator bool
+  bool na1 = a1; //OK: copy initialization selects A::operator bool()
+  bool na2 = static_cast<bool>(a1); //OK: static_cast performs direct initialization
+
+// B b1 = 1; //error: copy initialization does not consider explicit constructor
+  B b2(1); //OK
+  B b3{4, 5}; //OK
+// B 4 = {4, 5} //error
+  B b5 = (B)1 //OK: explicit cast perform static_cast
+  if (b2); //OK
+// bool nb1 = b2; //error
+  bool nb2 = static_cast<bool>(b2); //OK
+
+
+}
+```
