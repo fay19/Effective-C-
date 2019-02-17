@@ -38,11 +38,16 @@ p = s; //?? this is illegal, because Dog hold a reference to the name string, c+
 - An object didnt become a derived class object until execution of a derived clalss constructor begins.
 - Once a derived class destructor has run, the object's derived class data members assume undefined values. So C++ treats them as if they no longer exists. Upon entry to the base class desctructor, the object becomes a base class object, and all parts of C++ - virtual functions, dynamic_cast, etc., -treat it that way.
 9. explicit specifier
+- specify that a constructor or conversion function(since c++11) is explicit, that is , it cannot be used for implicit conversions and copy initialization
 ```
 struct A
 {
   A(int) {}
   A(int, int) {}
+  
+  //conversion operator: operator Typename()
+  //allow objects of the class type to be used as if they were of type Typename and when they are, they are converted to Typename
+  // using the conversion function
   operator bool() const { return true;}
 };
 
