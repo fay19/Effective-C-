@@ -33,5 +33,8 @@ p = s; //?? this is illegal, because Dog hold a reference to the name string, c+
  Object& operator=(const Object&) = delete;
  ```
 6. Declare destrutors virtual in polymorphic base classes. When a derived class object is deleted through a pointer to a base class with a non-virtual destructor, results are undefined. Any class with virtual functions should almost certainly have a virtual destrutor
-7. 
+7. Don't emit exceptions in destrutor.
+8. Never call virtual functions during construction or destruction. In contruction of derived class object, base class constructor is called first. If a virtual function is called in base class constructor, then the base class virtual function is called rathen the derived class version. It never goes down to derived class version. 
+- An object didnt become a derived class object until execution of a derived clalss constructor begins.
+- Once a derived class destructor has run, the object's derived class data members assume undefined values. So C++ treats them as if they no longer exists. Upon entry to the base class desctructor, the object becomes a base class object, and all parts of C++ - virtual functions, dynamic_cast, etc., -treat it that way.
 
