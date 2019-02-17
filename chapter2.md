@@ -80,3 +80,63 @@ int main {
 
 }
 ```
+10. assignment opertaor return a reference to *this
+11. handle self assignment in opertor=
+```
+class Bitmap { ... };
+
+class Widget
+{
+  ...
+private:
+  Bitmap *pb;                                   
+};
+
+//self assignment unsafe, exception unsafe
+Widget& Widget::operator=(const Widget& rhs)
+{
+  delete ph;
+  ph = new Widget(*rhs.ob); //is rhs and this are the same object, error happens
+  return *this
+}
+
+//self-assignment safe, exception unsafe
+Widget& Widget::operator=(const Widget& rhs)
+{
+  if (this == &rhs) return *this;
+  delete ph;
+  ph = new Widget(*rhs.ob); 
+  return *this
+}
+
+//self-assignment safe, exception safe
+Widget& Widget::operator=(const Widget& rhs)
+{
+  Bitmap *pOrig = pb;               // remember original pb
+  pb = new Bitmap(*rhs.pb);         // point pb to a copy of rhs's bitmap
+  delete pOrig;                     // delete the original pb
+
+  return *this;
+}
+
+//self-assignment safe, exception safe, copy and swap
+class Widget {
+  ...
+  void swap(Widget& rhs);   // exchange *this's and rhs's data;
+  ...                       // see Item 29 for details
+};
+
+Widget& Widget::operator=(const Widget& rhs)
+{
+  Widget temp(rhs);             // make a copy of rhs's data
+  swap(temp);                   // swap *this's data with the copy's
+  return *this;
+}
+
+//pass by value of swap *this data with the copy's
+Widget& Widget::operator=(Widget rhs)
+{
+  swap(rhs);
+  return *this;
+}
+```
