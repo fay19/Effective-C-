@@ -28,7 +28,8 @@ before complier call processWidget, complier must generate code to do these 3 th
 2. execute "new Widget"
 3. call tr1::shared_ptr constructor
 
-2 must be executed before 3, but the call to priority can be performed first, second, or third. If priority is performed second, any exception happens in priority() will results memory leak of newed Widget
+2 must be executed before 3, but the call to priority can be performed first, second, or third. If priority 
+is performed second, any exception happens in priority() will results memory leak of newed Widget
 */
 ```
 
