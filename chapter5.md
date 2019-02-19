@@ -55,4 +55,33 @@ public:
 - When casting is necessary, try to hide it inside a function. Clients can then call the function instead of putting casts in their own code.
 - Prefer C++-style casts to old-style casts. They are easier to see, and they are more specific about what they do.
 
+3. Avoid returning handles(references, pointers, or iterators) to object internals.
+```
+class Point {                      // class for representing points
+public:
+  Point(int x, int y);
+  ...
+
+  void setX(int newVal);
+  void setY(int newVal);
+  ...
+};
+
+class Rectangle {
+public:
+  ...
+  const Point& upperLeft() const { return pData->ulhc; }
+  const Point& lowerRight() const { return pData->lrhc; }
+  ...
+};
+
+class GuiObject{...};
+const Rectangle boundingBox(const GUIObject* obj);
+GuiObject *pgo;
+const Point *pUpperLeft = &(boundingBox(*pgo).upperLeft()); //*pUpperLeft is dangling
+
+```
+
+4. Strive for exception-safe code
+
 
