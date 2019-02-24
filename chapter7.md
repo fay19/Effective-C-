@@ -140,3 +140,85 @@ public:                                    // general template, except
   { ... }
 };
 ```
+
+6. Use member function templates to accept "all compatible types"
+
+- look at the case of smart pointer, thin about how to make the following code compile
+```
+class Top { ... };
+class Middle: public Top { ... };
+class Bottom: public Middle { ... };
+//compliable since raw pointers has implicit type conversion
+Top *pt1 = new Middle;                   // convert Middle* ⇒Top*
+Top *pt2 = new Bottom;                   // convert Bottom* ⇒Top*
+const Top *pct2 = pt1;                   // convert Top* ⇒ const Top*
+
+//cannot compile, because there is no inherent relationship among different instantiations of the same template, so compliers view 
+//SmartPtr<Middle> and SmartPtr<Top> as completely different classes.
+template<typename T>
+class SmartPtr {
+public:                             // smart pointers are typically
+  explicit SmartPtr(T *realPtr);    // initialized by built-in pointers
+  ...
+};
+
+SmartPtr<Top> pt1 =                 // convert SmartPtr<Middle> ⇒
+  SmartPtr<Middle>(new Middle);     //   SmartPtr<Top>
+
+SmartPtr<Top> pt2 =                 // convert SmartPtr<Bottom> ⇒
+  SmartPtr<Bottom>(new Bottom);     //   SmartPtr<Top>
+
+SmartPtr<const Top> pct2 = pt1;     // convert SmartPtr<Top> ⇒
+                                    //  SmartPtr<const Top>
+```
+- a construtor template is needed, such templates are example of member function templates/member templates - templates that generate member functions of a class
+```
+template<typename T>
+class SmartPtr {
+public:
+  template<typename U>                       // member template
+  SmartPtr(const SmartPtr<U>& other);        // for a "generalized
+  ...                                        // copy constructor"
+};
+//note The generalized copy constructor above is not declared explicit. That's deliberate. Type conversions among built-in pointer types //(e.g., from derived to base class pointers) are implicit and require no cast, so it's reasonable for smart pointers to emulate that //behavior. Omitting explicit on the templatized constructor does just that.
+```
+7. implicit type conversion functions are never considered during template argument deduction
+```
+template<typename T>
+class Rational {
+public:
+  Rational(const T& numerator = 0,     // see Item 20 for why params
+           const T& denominator = 1);  // are now passed by reference
+
+  const T numerator() const;           // see Item 28 for why return
+  const T denominator() const;         // values are still passed by value,
+  ...                                  // Item 3 for why they're const
+};
+
+template<typename T>
+const Rational<T> operator*(const Rational<T>& lhs,
+                            const Rational<T>& rhs)
+{ ... }
+
+Rational<int> oneHalf(1, 2);          // this example is from Item 24,
+                                      // except Rational is now a template
+
+Rational<int> result = oneHalf * 2;   // error! won't compile
+```
+- Solution: frient function, because a friend function declaration in a template can refer to a specific function, it doesnt depend on template argument deduction
+```
+template<typename T>
+class Rational {
+public:
+  ...
+
+friend                                              // declare operator*
+  const Rational operator*(const Rational& lhs,     // function (see
+                           const Rational& rhs);    // below for details)
+};
+
+template<typename T>                                // define operator*
+const Rational<T> operator*(const Rational<T>& lhs, // functions
+                            const Rational<T>& rhs)
+{ ... }
+```
