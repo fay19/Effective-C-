@@ -221,4 +221,5 @@ template<typename T>                                // define operator*
 const Rational<T> operator*(const Rational<T>& lhs, // functions
                             const Rational<T>& rhs)
 { ... }
+//Now our mixed-mode calls to operator* will compile, because when the object oneHalf is declared to be of type Rational<int>, the class //Rational<int> is instantiated, and as part of that process, the friend function operator* that takes Rational<int> parameters is //automatically declared. As a declared function (not a function template), compilers can use implicit conversion functions (such as //Rational's non-explicit constructor) when calling it, and that's how they make the mixed-mode call succeed.
 ```
